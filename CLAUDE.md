@@ -1,14 +1,28 @@
-# Project Rules
+# Tasker Knowledge Repo
 
-This repository is a Claude Code starter template. It provides a ready-to-use `.claude/` configuration folder that can be cloned for new projects or copied into existing ones.
+A living knowledge base for Tasker (Android automation) that Claude Code accumulates over time. Use `/add-dir C:\Github\Tasker-Knowledge-Repo` from any Tasker project to access this knowledge.
 
-## Workflow: Plan First, Then Init
+## Entry Point
 
-1. Say **"plan repo"** to choose stack, generate README, create design guardrails.
-2. Say **"initialize repo"** to configure Claude Code using the plan.
-3. Say **"update practices"** periodically to stay current.
+Always read `knowledge/_index.md` first. It lists every knowledge file with a one-line summary. Use it to find the right file before reading or editing.
 
-For features: say **"spec developer"** to generate a detailed plan, then start a fresh session to implement it.
+## Knowledge Workflows
+
+| Action | Trigger | What Happens |
+|--------|---------|-------------|
+| Add knowledge | "add knowledge" | Append a fact/technique to the right file |
+| Find knowledge | "find knowledge" | Search the knowledge base, return summary with citations |
+| Import session | "import session" | Parse unstructured content into multiple knowledge files |
+
+For manual edits, follow the format in `knowledge/_conventions.md`.
+
+## Cross-Repo Usage
+
+From any Tasker project repo:
+```
+/add-dir C:\Github\Tasker-Knowledge-Repo
+```
+Then use the `tasker-expert` agent or "find knowledge" skill to query the knowledge base while working.
 
 ## Coding Standards
 
@@ -16,109 +30,116 @@ For features: say **"spec developer"** to generate a detailed plan, then start a
 - Use descriptive names for variables, functions, and files.
 - Keep functions small and focused on a single responsibility.
 - Handle errors explicitly -- never swallow exceptions silently.
-- Validate inputs at system boundaries (user input, API responses, file I/O).
-- Avoid premature abstraction. Three similar lines are better than a forced helper.
-- Do not add comments for self-explanatory code. Add comments only when the "why" is non-obvious.
-- Files over 500 lines should be split. Large files consume excessive context.
+- Validate inputs at system boundaries.
+- Files over 500 lines should be split.
+- Do not add comments for self-explanatory code.
 
 ## Hierarchical CLAUDE.md Architecture
 
-CLAUDE.md files load top-down: root user level, then project level, then subfolder level. Only relevant files load -- a frontend task never loads the backend CLAUDE.md.
-
-- Root `CLAUDE.md` — Project-wide rules, stack, global conventions (this file).
-- Subfolder `CLAUDE.md` — Only when subfolder has distinct conventions (e.g., `frontend/CLAUDE.md` for UI rules, `backend/CLAUDE.md` for API rules).
-- `.claude/rules/*.md` — Conditional instructions with `paths:` frontmatter. Only load when working with matching file paths.
-- Keep each file focused. Prune after every model update -- remove what the model handles natively.
-- Do NOT bloat CLAUDE.md with generic advice the model already knows.
+- Root `CLAUDE.md` -- Project-wide rules (this file).
+- `.claude/rules/*.md` -- Conditional instructions with `paths:` frontmatter. Only load when working with matching file paths.
+- `knowledge-editing.md` loads for all `knowledge/**` edits.
+- `xml-knowledge.md` loads for `knowledge/xml/**` edits.
+- `plugin-knowledge.md` loads for `knowledge/plugins/**` edits.
 
 ## Subagent Usage
 
-Always and aggressively offload to subagents: online research, doc fetching, log analysis, codebase exploration. This keeps the main context narrow.
+Always offload to subagents: online research, doc fetching, log analysis, codebase exploration.
 
-- **Always include a "why"** in every subagent prompt. Not just what to find, but why you need it. "How auth works for rate limiting because we're improving rate limiting" beats "how auth works."
-- **Parallel exploration:** When torn between approaches, spin up parallel Explore subagents for each, pass results back, let the main session decide.
-- **Subagents are resumable.** You can resume a specific subagent to continue its research.
+- **Always include a "why"** in every subagent prompt.
+- **Parallel exploration:** Spin up parallel Explore subagents when comparing approaches.
+- **Subagents are resumable.**
 
 ## Skill Frontmatter
 
-Skills support these optional fields:
-
-- `disable_model_invocation: true` — Prevents auto-loading; invoke manually with /skillname.
-- `model: haiku|sonnet|opus` — Which model runs the skill. Step-by-step skills use haiku. Analysis skills use sonnet. Orchestration/planning skills use opus.
-- `context: fork` — Run skill in isolated subagent context (prevents context contamination).
-- `${CLAUDE_SKILL_DIR}` — Variable to reference the skill's own directory for relative file access.
+- `disable_model_invocation: true` -- Manual-only invocation.
+- `model: haiku|sonnet|opus` -- Which model runs the skill.
+- `context: fork` -- Run in isolated subagent context.
+- `${CLAUDE_SKILL_DIR}` -- Reference the skill's own directory.
 
 ## Fixed Infrastructure
 
-All projects use this hosting stack (see `.claude/references/infrastructure.md`):
-- **Cloudflare Pages** (frontend) + **Northflank** (backend containers, Postgres, Redis, cron)
-- **Cloudflare R2** (object storage) + **Better Auth** (auth within API) + **Resend/SES** (email)
-
-Plan-repo only recommends language, frameworks, UI library, ORM, and tooling. Infrastructure is locked.
+All projects use: **Cloudflare Pages** (frontend) + **Northflank** (backend, Postgres, Redis, cron) + **Cloudflare R2** (storage) + **Better Auth** + **Resend/SES** (email). See `.claude/references/infrastructure.md`.
 
 ## File Organization
 
-- Keep the `.claude/` folder self-contained. No absolute paths, no references outside the repo except CLAUDE.md, agents.md, and README.md.
-- Skills live in `.claude/skills/<skill-name>/SKILL.md`.
-- Agents live in `.claude/agents/<agent-name>.md`.
-- Source URLs for fetching best practices live in `.claude/references/source-urls.md`.
-- Infrastructure definition lives in `.claude/references/infrastructure.md` (locked, do not modify per-project).
-- CLI tools reference lives in `.claude/references/tools.md`.
-- Design guardrails (UI projects) live in `.claude/references/design-guardrails.md`.
-- Project settings go in `.claude/settings.json` (version-controlled). Personal overrides go in `.claude/settings.local.json` (git-ignored).
-
-## Planning
-
-- Planning is **phase-based**, not timeline-based. Phases: Foundation, Core, Polish, Ship.
-- Always plan in one session, execute in another. Clear context between planning and implementation.
-- Save every plan to a `/tasks` folder. This lets you selectively undo a feature later.
-- For big features, use the **spec-developer** skill to generate a thorough plan.
-
-## Context Management
-
-- Keep this file under 150 lines for reliable adherence.
-- Break tasks small enough to complete in under 50% context usage.
-- Use `/compact` proactively around 50% context.
-- Start fresh conversations for unrelated topics.
-- Begin complex tasks in plan mode before implementation.
-- **Code bias fix:** If stuck in bad patterns, build the feature in isolation in a fresh folder, then port it in.
-- **Document failed attempts:** For stubborn bugs, have Claude write a document of all attempted fixes before starting a new session. New session loads the document, avoids repeating dead ends.
-- **Handoff docs:** Use `/handoff` to create a summary before ending a session. Load in fresh session as sole context.
-
-## Date Awareness
-
-Best practices must reflect the current date. Always check the current date -- do not assume. When fetching best practices, verify versions and recommendations are current as of today.
+- Skills: `.claude/skills/<skill-name>/SKILL.md`
+- Agents: `.claude/agents/<agent-name>.md`
+- Knowledge: `knowledge/<category>/<topic>.md`
+- Source URLs: `.claude/references/source-urls.md`
+- Settings: `.claude/settings.json` (version-controlled), `.claude/settings.local.json` (git-ignored)
 
 ## Available Skills
 
 | Skill | Trigger | Purpose |
 |-------|---------|---------|
-| plan-repo | "plan repo" | Research and recommend best tech stack, generate README, design guardrails |
-| init-repo | "initialize repo" | Build or rebuild .claude/ folder with best practices |
-| update-practices | "update practices" | Fetch latest best practices and update config |
-| spec-developer | "spec developer" | Interview-driven feature spec saved to /tasks |
-| code-review | "code review" | Full codebase review with severity levels |
+| add-knowledge | "add knowledge" | Append Tasker knowledge to the right file |
+| find-knowledge | "find knowledge" | Search knowledge base, return summary |
+| import-session | "import session" | Parse unstructured content into knowledge files |
+| plan-repo | "plan repo" | Research and recommend best tech stack |
+| init-repo | "initialize repo" | Build or rebuild .claude/ folder |
+| update-practices | "update practices" | Fetch latest best practices |
+| spec-developer | "spec developer" | Interview-driven feature spec |
+| code-review | "code review" | Full codebase review |
 | security-scan | "security scan" | OWASP-style security audit |
-| performance-review | "performance review" | Performance analysis with fix recommendations |
-| dependency-audit | "dependency audit" | Check dependencies for updates and vulnerabilities |
-| test-scaffold | "scaffold tests" | Generate test files for untested modules |
-| doc-sync | "sync docs" | Align documentation with current code |
-| mermaid-diagram | "mermaid diagram" | Generate data flow / architecture diagrams |
+| performance-review | "performance review" | Performance analysis |
+| dependency-audit | "dependency audit" | Check dependencies |
+| test-scaffold | "scaffold tests" | Generate test files |
+| doc-sync | "sync docs" | Align docs with code |
+| mermaid-diagram | "mermaid diagram" | Generate diagrams |
 
 ## Available Agents
 
-See `agents.md` in the repo root for the full agent registry. Key agents:
+See `agents.md` for the full registry. Key agents:
 
-- **architect** -- phase-based planning, tech stack decisions, file structure design
-- **reviewer** -- code review focused on correctness and maintainability
-- **security** -- security-focused analysis and vulnerability detection
-- **performance** -- performance-focused analysis and optimization
-- **explorer** -- codebase exploration, research, and context gathering
+- **tasker-expert** -- answer Tasker questions from the knowledge base
+- **architect** -- phase-based planning, tech stack decisions
+- **reviewer** -- code review for correctness and maintainability
+- **security** -- vulnerability detection and security analysis
+- **performance** -- performance analysis and optimization
+- **explorer** -- codebase exploration, research, context gathering
+
+## Planning
+
+- Phase-based, not timeline-based: Foundation, Core, Polish, Ship.
+- Plan in one session, execute in another.
+- Save plans to `/tasks`.
+
+## Context Management
+
+- Keep this file under 150 lines.
+- Use `/compact` proactively around 50% context.
+- Start fresh conversations for unrelated topics.
+- Use `/handoff` before ending sessions.
 
 ## Workflow
 
-1. Read existing code before proposing changes.
+1. Read existing code/knowledge before proposing changes.
 2. Prefer editing existing files over creating new ones.
-3. Do not over-engineer. Only make changes that are directly requested or clearly necessary.
-4. Use the source URL registry at `.claude/references/source-urls.md` when fetching best practices -- never hardcode URLs in skills.
-5. Check `.claude/references/tools.md` for available CLI tools before running commands. Offer to install missing tools.
+3. Do not over-engineer.
+4. Use `.claude/references/source-urls.md` for best practice URLs.
+5. Check `.claude/references/tools.md` for CLI tools before running commands.
+
+## RULE 1 -- Check LL-G Before Scripting (MANDATORY)
+
+**At the start of any session involving scripting, API calls, or automation -- before writing a single line -- fetch the LL-G index and load relevant entries.**
+
+```
+Step 1: Fetch https://raw.githubusercontent.com/wellforce-brandon/LL-G/main/llms.txt
+Step 2: For each technology you will use, fetch its sub-index (e.g., kb/ninjaone/llms.txt)
+Step 3: Read ALL HIGH-severity entries for those technologies
+Step 4: Read any MEDIUM entry whose title matches your specific task
+```
+
+Technologies currently in LL-G: PowerShell, Graph API, NinjaOne, Next.js, Tailwind CSS, TypeScript, Godot/GDScript, Better Auth, Bash.
+
+This applies to every session, every technician, every developer. Not optional.
+
+### Contributing back
+
+Every plan file MUST end with a **Lessons Learned / Gotchas** section. After implementation, route any new discoveries to LL-G -- not to local agent-memory or local pattern files only.
+
+- Preferred: run `/add-lesson` from any session that has `C:\Github\LL-G` in context
+- Manual: create `kb/<tech>/<slug>.md`, update `kb/<tech>/llms.txt`, update the master `llms.txt`
+
+Lessons stored locally stay local. Lessons in LL-G benefit every repo and every technician.
