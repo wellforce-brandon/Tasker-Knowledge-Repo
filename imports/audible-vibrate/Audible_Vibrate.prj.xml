@@ -1,0 +1,36 @@
+<TaskerData sr="" dession="no" tv="6.4.1">
+	<Project sr="proj0" ve="2">
+		<name>Audible Vibrate</name>
+		<pids>900</pids>
+		<tids>900,901</tids>
+	</Project>
+	<Profile sr="prof0" ve="2">
+		<id>900</id>
+		<mid0>900</mid0>
+		<mid1>901</mid1>
+		<nme>Audible Vibrate</nme>
+		<App sr="con0">
+			<pkg>com.audible.application</pkg>
+		</App>
+	</Profile>
+	<Task sr="task0">
+		<cdate>1741200000000</cdate>
+		<edate>1741200000000</edate>
+		<id>900</id>
+		<nme>Audible Vibrate On</nme>
+		<Action sr="act0" ve="7">
+			<code>32</code>
+			<Int sr="arg0" val="1"/>
+		</Action>
+	</Task>
+	<Task sr="task1">
+		<cdate>1741200000000</cdate>
+		<edate>1741200000000</edate>
+		<id>901</id>
+		<nme>Audible Vibrate Off</nme>
+		<Action sr="act0" ve="7">
+			<code>32</code>
+			<Int sr="arg0" val="0"/>
+		</Action>
+	</Task>
+</TaskerData>

@@ -3,6 +3,7 @@ name: reviewer
 description: Use PROACTIVELY for code review focused on correctness, maintainability, naming, DRY violations, and adherence to project standards.
 model: sonnet
 permissionMode: plan
+memory: project
 tools:
   - Read
   - Glob

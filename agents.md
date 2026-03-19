@@ -38,3 +38,10 @@ All custom agents for this project. Each agent is defined in `.claude/agents/` a
 - **Purpose:** Codebase exploration, online research, doc fetching, and context gathering. Always include a "why" when spawning -- not just what to find, but why you need it.
 - **When to use:** Before implementing features (understand existing patterns), when researching approaches, when gathering context for planning. Spin up multiple explorers in parallel for competing approaches.
 - **Model:** sonnet
+
+### tasker-expert
+
+- **File:** `.claude/agents/tasker-expert.md`
+- **Purpose:** Answer Tasker (Android automation) questions by searching the `knowledge/` directory. Primary interface when using this repo via `/add-dir` from another project.
+- **When to use:** When you need Tasker-specific knowledge -- how actions work, XML structure, plugin configuration, variable behavior, debugging techniques, or Android compatibility workarounds. Also useful for verifying assumptions before implementing Tasker automations.
+- **Model:** sonnet

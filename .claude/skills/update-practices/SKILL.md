@@ -3,6 +3,7 @@ name: update-practices
 description: Fetch latest Claude Code best practices and update the .claude/ folder configuration. Safe to run repeatedly.
 user-invocable: true
 argument-hint: (no arguments needed)
+model: sonnet
 allowed-tools:
   - Read
   - Write

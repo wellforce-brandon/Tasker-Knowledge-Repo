@@ -3,6 +3,7 @@ name: doc-sync
 description: Synchronize documentation with the current codebase. Finds stale docs, missing docs, and inconsistencies. Use after making significant code changes.
 user-invocable: true
 argument-hint: (no arguments needed)
+model: sonnet
 allowed-tools:
   - Read
   - Write

@@ -1,0 +1,17 @@
+<TaskerData sr="" dession="no" tv="6.3.13">
+	<Task sr="task0">
+		<cdate>1741200000000</cdate>
+		<edate>1741200000000</edate>
+		<id>900</id>
+		<nme>Audible Vibrate On</nme>
+		<Action sr="act0" ve="7">
+			<code>123</code>
+			<Str sr="arg0" ve="3">settings put system mode_ringer 1</Str>
+			<Int sr="arg1" val="0"/>
+			<Int sr="arg2" val="0"/>
+			<Str sr="arg3" ve="3"/>
+			<Str sr="arg4" ve="3"/>
+			<Str sr="arg5" ve="3"/>
+		</Action>
+	</Task>
+</TaskerData>

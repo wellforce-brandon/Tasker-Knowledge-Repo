@@ -3,6 +3,8 @@ name: code-review
 description: Run a full code review of the codebase with severity-ranked findings. Use when you want a comprehensive quality check.
 user-invocable: true
 argument-hint: [optional: file or directory path to scope the review]
+model: sonnet
+context: fork
 allowed-tools:
   - Read
   - Glob

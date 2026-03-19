@@ -1,15 +1,26 @@
-# Claude Code Starter Template -- Instructions
+# Tasker Knowledge Repo -- Instructions
 
-## What This Template Is
+## What This Repo Is
 
-This repository provides a pre-configured `.claude/` folder that gives Claude Code a set of skills, agents, and settings aligned with current best practices. It works in two modes:
+A living knowledge base for Tasker (Android automation) that Claude Code accumulates over time. It combines a pre-configured `.claude/` folder with a `knowledge/` directory of topical reference files. It works in two modes:
 
-1. **Clone for new projects** -- Start a new repo with Claude Code already configured.
-2. **Copy into existing projects** -- Drop the `.claude/` folder (plus CLAUDE.md and agents.md) into any existing repo to add Claude Code capabilities.
+1. **Standalone** -- Open this repo in Claude Code to add, find, or import Tasker knowledge.
+2. **Cross-repo reference** -- Run `/add-dir C:\Github\Tasker-Knowledge-Repo` from any Tasker project to query the knowledge base while working.
 
 ## Folder Structure
 
 ```
+knowledge/
+  _index.md                # Master index -- read this first
+  _conventions.md          # File format standard
+  core/                    # Profiles, tasks, variables, scenes
+  programming/             # JavaScript, Java reflection, shell commands
+  xml/                     # Task XML structure, action codes, import/export
+  intents/                 # Intent basics and common intents
+  plugins/                 # AutoTools, AutoInput, AutoNotification, Join
+  ui/                      # WebView, JS bridge, scene elements
+  patterns/                # API integration, events, errors, debugging
+  workarounds/             # Gotchas, Android compat, permissions
 .claude/
   agents/                  # Custom agent definitions
     architect.md           # Phase-based planning and system design
@@ -17,8 +28,15 @@ This repository provides a pre-configured `.claude/` folder that gives Claude Co
     security.md            # Security analysis agent
     performance.md         # Performance analysis agent
     explorer.md            # Codebase exploration and research agent
+    tasker-expert.md       # Tasker knowledge base query agent
   rules/                   # Conditional instructions (paths: frontmatter)
+    knowledge-editing.md   # Rules for editing knowledge/** files
+    xml-knowledge.md       # Rules for editing knowledge/xml/** files
+    plugin-knowledge.md    # Rules for editing knowledge/plugins/** files
   skills/                  # Executable skill definitions
+    add-knowledge/SKILL.md # Add a fact/technique to the knowledge base
+    find-knowledge/SKILL.md # Search the knowledge base
+    import-session/SKILL.md # Bulk-import from session dumps or notes
     plan-repo/SKILL.md     # Pre-init project planning
     init-repo/SKILL.md     # Repository initialization
     update-practices/SKILL.md  # Best practice updates
@@ -74,7 +92,56 @@ All planning uses phases, never dates or time estimates:
 
 ---
 
+## Knowledge Contribution Workflow
+
+### Quick Add
+
+Say **"add knowledge"** or **"document this"** to capture a single piece of Tasker knowledge. Claude reads the index, finds the right file, and appends the knowledge in the correct section.
+
+### Bulk Import
+
+Say **"import session"** or **"dump session knowledge"** to import from another session. Provide raw text, a handoff doc path, or notes. Claude parses the content into discrete items, classifies each by domain, and distributes them across the knowledge base.
+
+### Search
+
+Say **"find knowledge"** or **"what do we know about X"** to search. Claude searches the index and files, returns a summary with citations.
+
+### Manual Edit
+
+Edit files in `knowledge/` directly following the format in `knowledge/_conventions.md`. Update `knowledge/_index.md` when creating new files.
+
+### Cross-Repo Access
+
+From any Tasker project repo:
+```
+/add-dir C:\Github\Tasker-Knowledge-Repo
+```
+Then use the `tasker-expert` agent or `find-knowledge` skill.
+
+---
+
 ## Skills Reference
+
+### add-knowledge
+
+- **Trigger:** "add knowledge", "save knowledge", "document this"
+- **What it does:** Reads the knowledge index, finds the matching file for the topic, reads it, and appends the new knowledge in the correct section (Key Facts, Details, Gotchas, or Related). Creates new files when needed and updates the index.
+- **When to use:** When you learn something about Tasker that should be preserved.
+- **Model:** sonnet
+
+### find-knowledge
+
+- **Trigger:** "find knowledge", "search knowledge", "what do we know about"
+- **What it does:** Reads the knowledge index, greps for keywords across `knowledge/`, reads the top matches, and returns a focused summary with file citations.
+- **When to use:** When you need to check what the knowledge base says about a topic.
+- **Model:** haiku (fast lookup)
+
+### import-session
+
+- **Trigger:** "import session", "dump session knowledge"
+- **What it does:** Accepts raw input (pasted text, handoff doc, or file path), parses it into discrete knowledge items, classifies each by domain, appends to the appropriate files, and reports a summary of what was added.
+- **When to use:** After a productive Tasker session where you learned many things. Also useful for importing notes from other sources.
+- **Model:** opus (handles unstructured parsing)
 
 ### plan-repo
 
@@ -187,6 +254,13 @@ All agents are registered in [agents.md](agents.md) at the repo root. This file 
 - **Mode:** plan
 - **Purpose:** Codebase exploration, online research, doc fetching, context gathering. Always include a "why" when spawning.
 
+### tasker-expert
+
+- **File:** `.claude/agents/tasker-expert.md`
+- **Model:** sonnet
+- **Purpose:** Answer Tasker questions by searching the `knowledge/` directory. Reads the index first, greps for relevant terms, reads matching files, and synthesizes an answer with citations. If knowledge is missing, says so explicitly. Primary interface when using this repo via `/add-dir` from another project.
+- **When to use:** When you need Tasker-specific knowledge -- how actions work, XML structure, plugin configuration, variable behavior, debugging techniques, or Android compatibility workarounds.
+
 ---
 
 ## Hierarchical CLAUDE.md Architecture
@@ -263,7 +337,23 @@ allowed-tools:
 ---
 ```
 
-**Model selection guidelines:**
+**Model assignments in this template:**
+
+| Skill | Model | Context | Rationale |
+|-------|-------|---------|-----------|
+| plan-repo | opus | — | Orchestration and research |
+| init-repo | opus | — | Orchestration and config generation |
+| spec-developer | opus | — | Planning and interview-driven design |
+| update-practices | sonnet | — | Analysis and source fetching |
+| code-review | sonnet | fork | Analysis, isolated to prevent contamination |
+| security-scan | sonnet | fork | Analysis, delegates to security agent |
+| performance-review | sonnet | fork | Analysis, delegates to performance agent |
+| dependency-audit | sonnet | fork | Analysis of package manifests |
+| test-scaffold | sonnet | — | Analysis + code generation |
+| doc-sync | sonnet | — | Cross-reference analysis |
+| mermaid-diagram | sonnet | — | Codebase analysis + diagram generation |
+
+**General model selection guidelines:**
 - `haiku` — Well-defined step-by-step skills (localization, release, formatting)
 - `sonnet` — Analysis and research skills (code review, exploration)
 - `opus` — Orchestration and planning skills (spec developer, architect)
@@ -319,6 +409,7 @@ The template includes hooks in `.claude/settings.json`:
 - **PreToolUse (git commit):** Logs a notification when commits are made.
 - **Stop:** Bell sound when Claude finishes a task (useful with multiple sessions).
 - **Notification:** Bell sound when Claude needs attention.
+- **SubagentStop:** Bell sound when a background subagent completes.
 
 To add custom hooks, edit `.claude/settings.json`. Supported hook events:
 

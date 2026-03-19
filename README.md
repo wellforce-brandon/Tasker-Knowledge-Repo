@@ -1,88 +1,92 @@
-# Claude Code Starter Template
+# Tasker Knowledge Repo
 
-A ready-to-use `.claude/` configuration folder for any repository. Ships with skills, agents, and settings aligned to Claude Code best practices (March 2026).
+A living knowledge base for [Tasker](https://tasker.joaoapps.com/) (Android automation) that Claude Code accumulates over time. Designed to be referenced from any Tasker project via `/add-dir`.
 
-## Quick Start
+## How It Works
 
-### New Project
+The `knowledge/` directory contains topical markdown files covering Tasker core concepts, programming, XML structure, intents, plugins, UI, patterns, and workarounds. Claude Code reads, searches, and updates these files through three workflows.
 
-```bash
-git clone https://github.com/your-org/claude-code-bootstrap.git my-project
-cd my-project
-rm -rf .git && git init
+## Workflows
+
+### 1. Add Knowledge
+
+Say **"add knowledge"** to capture a single fact, technique, or gotcha.
+
+Claude finds the right file, appends to the correct section, and updates the index.
+
+### 2. Import Session
+
+Say **"import session"** to bulk-import knowledge from another session.
+
+Paste raw notes, point to a handoff doc, or provide a transcript path. Claude parses it into discrete items and distributes them across the knowledge base.
+
+### 3. Find Knowledge
+
+Say **"find knowledge"** to search the knowledge base.
+
+Claude searches the index and files, then returns a focused summary with file citations.
+
+### 4. Manual Edit
+
+Edit files in `knowledge/` directly. Follow the format in `knowledge/_conventions.md`.
+
+## Cross-Repo Usage
+
+From any Tasker project repo in Claude Code:
+
+```
+/add-dir C:\Github\Tasker-Knowledge-Repo
 ```
 
-Then open Claude Code and say: **"plan repo"** to plan your stack, then **"initialize repo"** to configure.
+Then use the **tasker-expert** agent or **find-knowledge** skill to query while working.
 
-### Existing Project
-
-```bash
-# Copy the .claude/ folder into your repo
-cp -r path/to/claude-code-bootstrap/.claude/ your-repo/.claude/
-cp path/to/claude-code-bootstrap/CLAUDE.md your-repo/CLAUDE.md
-cp path/to/claude-code-bootstrap/agents.md your-repo/agents.md
-```
-
-Then open Claude Code in your repo and say: **"initialize repo"** to merge the template with your existing setup.
-
-## Workflow
+## Knowledge Structure
 
 ```
-plan repo  →  initialize repo  →  (build features)  →  update practices
-    ↑                                    |
-    |              spec developer  ←─────┘
-    |              (plan in one session, execute in another)
-    └──────────────────────────────────────────────────────┘
+knowledge/
+  _index.md              # Master index -- read this first
+  _conventions.md        # File format standard
+  core/                  # Profiles, tasks, variables, scenes
+  programming/           # JavaScript, Java reflection, shell
+  xml/                   # Task XML structure, action codes, import/export
+  intents/               # Intent basics and common intents
+  plugins/               # AutoTools, AutoInput, AutoNotification, Join
+  ui/                    # WebView, JS bridge, scene elements
+  patterns/              # API integration, events, errors, debugging
+  workarounds/           # Gotchas, Android compat, permissions
 ```
 
-1. **Plan first:** `plan repo` researches current options and recommends the best stack for your project, then generates README, design guardrails, and tools reference.
-2. **Initialize:** `init-repo` reads the plan and configures `.claude/` with skills, agents, settings, and hierarchical CLAUDE.md files.
-3. **Build features:** Use `spec developer` for big features -- it interviews you, explores the codebase, and generates a detailed plan saved to `/tasks`. Execute in a fresh session.
-4. **Stay current:** `update practices` fetches latest best practices and updates your config. Safe to run anytime.
-
-## What's Included
-
-### Skills
+## Skills
 
 | Skill | Trigger | Description |
 |-------|---------|-------------|
-| plan-repo | "plan repo" | Research and recommend best tech stack, generate README, design guardrails, tools reference |
-| init-repo | "initialize repo" | Build or rebuild the .claude/ folder with best practices |
+| add-knowledge | "add knowledge" | Append a fact/technique to the right knowledge file |
+| find-knowledge | "find knowledge" | Search the knowledge base, return summary with citations |
+| import-session | "import session" | Parse unstructured content into knowledge files |
+| plan-repo | "plan repo" | Research and recommend best tech stack |
+| init-repo | "initialize repo" | Build or rebuild .claude/ folder with best practices |
 | update-practices | "update practices" | Fetch latest best practices and update config |
 | spec-developer | "spec developer" | Interview-driven feature spec saved to /tasks |
 | code-review | "code review" | Full codebase review with severity-ranked findings |
-| security-scan | "security scan" | OWASP Top 10, secrets detection, dependency audit |
-| performance-review | "performance review" | Bottleneck analysis with impact-ranked fixes |
-| dependency-audit | "dependency audit" | Outdated, vulnerable, and unused dependency detection |
+| security-scan | "security scan" | OWASP Top 10 security audit |
+| performance-review | "performance review" | Performance analysis with fix recommendations |
+| dependency-audit | "dependency audit" | Check dependencies for updates and vulnerabilities |
 | test-scaffold | "scaffold tests" | Generate test files for untested modules |
 | doc-sync | "sync docs" | Align documentation with current code |
 | mermaid-diagram | "mermaid diagram" | Generate data flow / architecture diagrams |
 
-### Agents
-
-See [agents.md](agents.md) for the full agent registry.
+## Agents
 
 | Agent | Purpose |
 |-------|---------|
-| architect | Phase-based planning, tech stack decisions, file structure |
+| tasker-expert | Answer Tasker questions from the knowledge base |
+| architect | Phase-based planning, tech stack decisions |
 | reviewer | Code review for correctness and maintainability |
 | security | Vulnerability detection and security analysis |
 | performance | Bottleneck identification and optimization |
-| explorer | Codebase exploration, research, and context gathering |
+| explorer | Codebase exploration, research, context gathering |
 
-### Key Concepts
-
-- **Phase-based planning:** Foundation → Core → Polish → Ship. No timelines.
-- **Hierarchical CLAUDE.md:** Root → subfolder, loaded top-down. Only relevant files load.
-- **Subagent-first:** Always offload research, exploration, and log analysis to subagents. Include a "why" in every subagent prompt.
-- **Plan/execute separation:** Plan in one session, execute in another. Save plans to `/tasks`.
-- **Date-aware practices:** Always checks the current date when fetching best practices.
-- **Tools reference:** `.claude/references/tools.md` lists all CLI tools so Claude can detect and install missing ones.
-- **Design guardrails:** `.claude/references/design-guardrails.md` enforces UI/design SLA for frontend projects.
-
-## Keeping Up to Date
-
-Say **"update practices"** in Claude Code. The skill fetches the latest best practices from official and community sources, then updates your config. Safe to run anytime.
+See [agents.md](agents.md) for the full agent registry.
 
 ## Full Documentation
 

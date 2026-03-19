@@ -4,6 +4,7 @@ description: Generate Mermaid diagrams to visualize data flow, architecture, or 
 user-invocable: true
 disable_model_invocation: true
 argument-hint: [optional: specific flow or component to diagram]
+model: sonnet
 allowed-tools:
   - Read
   - Glob
